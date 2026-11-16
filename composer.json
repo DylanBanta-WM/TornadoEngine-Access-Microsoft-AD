@@ -21,7 +21,10 @@
             "core": ">=0.12",
             "core-module": false,
             "provider": "TornadoEngine\\AccessMicrosoftAd\\AccessMicrosoftAdServiceProvider",
-            "php-extensions": ["ldap"]
+            "php-extensions": [
+                "ldap"
+            ],
+            "settings": "/access/active-directory"
         },
         "branch-alias": {
             "dev-main": "0.1.x-dev"
