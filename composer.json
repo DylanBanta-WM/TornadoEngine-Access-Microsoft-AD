@@ -1,0 +1,30 @@
+{
+    "name": "tornado-engine/access-microsoft-ad",
+    "description": "Tornado Engine module: gives roles to Active Directory OUs, groups and users, synced nightly, with optional Active Directory sign-in.",
+    "type": "library",
+    "license": "MIT",
+    "require": {
+        "php": "^8.4",
+        "illuminate/support": "^13.0",
+        "directorytree/ldaprecord": "^4.1",
+        "tornado-engine/access": ">=0.6",
+        "tornado-engine/cron": ">=0.4"
+    },
+    "autoload": {
+        "psr-4": {
+            "TornadoEngine\\AccessMicrosoftAd\\": "src/"
+        }
+    },
+    "extra": {
+        "tornado": {
+            "name": "Access-Microsoft-AD",
+            "core": ">=0.12",
+            "core-module": false,
+            "provider": "TornadoEngine\\AccessMicrosoftAd\\AccessMicrosoftAdServiceProvider",
+            "php-extensions": ["ldap"]
+        },
+        "branch-alias": {
+            "dev-main": "0.1.x-dev"
+        }
+    }
+}
