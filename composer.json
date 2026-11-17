@@ -24,7 +24,8 @@
             "php-extensions": [
                 "ldap"
             ],
-            "settings": "/access/active-directory"
+            "settings": "/access/active-directory",
+            "needs-setup": true
         },
         "branch-alias": {
             "dev-main": "0.2.x-dev"
