@@ -16,7 +16,13 @@ class Rule extends Model
 
     protected $table = 'access_microsoft_ad_rules';
 
-    protected $fillable = ['role_id', 'type', 'value', 'sub_ous', 'matched'];
+    protected $fillable = ['role_id', 'type', 'value', 'sub_ous', 'primary', 'matched'];
+
+    /** How the rule reads on the page, for example: the OU OU=Students,DC=district,DC=local. */
+    public function describe(): string
+    {
+        return __('the :type :value', ['type' => $this->type === 'ou' ? 'OU' : strtolower(__(self::TYPES[$this->type])), 'value' => $this->label ?? $this->value]);
+    }
 
     public function role(): BelongsTo
     {
@@ -35,6 +41,6 @@ class Rule extends Model
 
     protected function casts(): array
     {
-        return ['sub_ous' => 'boolean', 'matched' => 'integer'];
+        return ['sub_ous' => 'boolean', 'primary' => 'boolean', 'matched' => 'integer'];
     }
 }

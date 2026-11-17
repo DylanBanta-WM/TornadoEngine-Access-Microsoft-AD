@@ -12,5 +12,6 @@ Route::middleware(['web', 'auth', 'can:access.manage'])
         Route::post('/sign-in', [AdController::class, 'signIn'])->name('signin');
         Route::post('/rules', [AdController::class, 'store'])->name('rules.store');
         Route::delete('/rules/{rule}', [AdController::class, 'destroy'])->name('rules.destroy');
+        Route::post('/rules/{rule}/primary', [AdController::class, 'primary'])->name('rules.primary');
         Route::post('/sync', [AdController::class, 'sync'])->name('sync');
     });

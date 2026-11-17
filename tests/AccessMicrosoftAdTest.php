@@ -47,7 +47,7 @@ class AccessMicrosoftAdTest extends TestCase
 
     public function test_roles_come_from_ous_groups_and_users(): void
     {
-        $staff = Role::create(['name' => 'Staff']);
+        $staff = Role::firstOrCreate(['name' => 'Staff']);
         $hs = Role::create(['name' => 'High school']);
         $teachers = Role::create(['name' => 'Teachers']);
         $tech = Role::create(['name' => 'Tech']);
@@ -67,7 +67,7 @@ class AccessMicrosoftAdTest extends TestCase
 
     public function test_people_who_leave_or_are_excluded_lose_the_role(): void
     {
-        $staff = Role::create(['name' => 'Staff']);
+        $staff = Role::firstOrCreate(['name' => 'Staff']);
         Rule::create(['role_id' => $staff->id, 'type' => 'ou', 'value' => 'OU=Staff,DC=district,DC=local', 'sub_ous' => true]);
         $this->sync();
         $this->assertSame(['Staff'], $this->rolesOf('bob@district.org'));
@@ -82,7 +82,7 @@ class AccessMicrosoftAdTest extends TestCase
 
     public function test_nothing_changes_when_ad_cant_be_reached(): void
     {
-        $staff = Role::create(['name' => 'Staff']);
+        $staff = Role::firstOrCreate(['name' => 'Staff']);
         Rule::create(['role_id' => $staff->id, 'type' => 'ou', 'value' => 'OU=Staff,DC=district,DC=local', 'sub_ous' => true]);
         $this->sync();
 
@@ -135,6 +135,21 @@ class AccessMicrosoftAdTest extends TestCase
         $this->post('/login', ['email' => 'ann', 'password' => 'wrong'])->assertSessionHasErrors('email');
         $this->post('/login', ['email' => 'ann', 'password' => 'ad-password'])->assertRedirect('/dashboard');
         $this->assertAuthenticatedAs($ann);
+    }
+
+    public function test_people_a_roles_primary_rule_missed_are_listed(): void
+    {
+        $teachers = Role::create(['name' => 'Teachers']);
+        $group = Rule::create(['role_id' => $teachers->id, 'type' => 'group', 'value' => 'CN=Teachers,OU=Groups,DC=district,DC=local']);
+        Rule::create(['role_id' => $teachers->id, 'type' => 'ou', 'value' => 'OU=Staff,DC=district,DC=local', 'sub_ous' => true]);
+        $manager = $this->manager();
+
+        $this->actingAs($manager)->post("/access/active-directory/rules/{$group->id}/primary");
+        $this->sync();
+
+        $this->actingAs($manager)->get('/access/active-directory')
+            ->assertSee('People the primary rule for Teachers missed (1)')
+            ->assertSeeInOrder(['Bob Office', 'bob@district.org', 'Caught by the OU OU=Staff,DC=district,DC=local.']);
     }
 
     public function test_only_people_who_manage_access_can_open_it(): void

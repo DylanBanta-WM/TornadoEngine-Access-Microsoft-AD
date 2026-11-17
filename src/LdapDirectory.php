@@ -12,7 +12,7 @@ class LdapDirectory implements Directory
 {
     private const PEOPLE = '(&(objectCategory=person)(objectClass=user))';
 
-    private const ATTRIBUTES = ['mail', 'userprincipalname', 'displayname', 'distinguishedname', 'useraccountcontrol'];
+    private const ATTRIBUTES = ['mail', 'userprincipalname', 'displayname', 'givenname', 'sn', 'employeeid', 'distinguishedname', 'useraccountcontrol'];
 
     private ?LdapConnection $connection = null;
 
@@ -122,6 +122,9 @@ class LdapDirectory implements Directory
             'name' => (string) ($entry['displayname'][0] ?? ''),
             'dn' => (string) ($entry['dn'] ?? $entry['distinguishedname'][0] ?? ''),
             'disabled' => ((int) ($entry['useraccountcontrol'][0] ?? 0) & 2) === 2,
+            'given' => (string) ($entry['givenname'][0] ?? ''),
+            'family' => (string) ($entry['sn'][0] ?? ''),
+            'employee_id' => (string) ($entry['employeeid'][0] ?? ''),
         ];
     }
 

@@ -47,6 +47,20 @@ class AccessMicrosoftAdServiceProvider extends ServiceProvider
                 description: __('Gives roles to the people in your Active Directory rules (Users and roles → Active Directory), and takes them back from people who left.'));
         });
 
+        // With the broker: names and employee IDs from Active Directory.
+        $this->callAfterResolving('TornadoEngine\Broker\Broker', function ($broker) {
+            $broker->source('active-directory', function (array $emails) {
+                if (! Connection::configured()) {
+                    return [];
+                }
+                $users = app(Directory::class)->users();
+
+                return collect($emails)->filter(fn ($email) => isset($users[$email]))->mapWithKeys(fn ($email) => [$email => array_values(array_filter([
+                    [$users[$email]['name'], 'name'], [$users[$email]['given'] ?? '', 'given'], [$users[$email]['family'] ?? '', 'family'], [$users[$email]['employee_id'] ?? '', 'employeeID'],
+                ], fn ($value) => $value[0] !== ''))])->all();
+            });
+        });
+
         $this->callAfterResolving(Docs::class, function (Docs $docs) {
             $docs->add('active-directory', __('Set up Active Directory'), 'access-microsoft-ad::docs.setup', order: 40);
         });
