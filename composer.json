@@ -26,7 +26,8 @@
                 "ldap"
             ],
             "settings": "/access/active-directory",
-            "needs-setup": true
+            "needs-setup": true,
+            "setup-done": "TornadoEngine\\AccessMicrosoftAd\\Connection@configured"
         },
         "branch-alias": {
             "dev-main": "0.3.x-dev"
