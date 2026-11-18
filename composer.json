@@ -21,6 +21,7 @@
             "prompt": "Active Directory: modules read it through TornadoEngine\\AccessMicrosoftAd\\Directory (users, group members) when they need it, rather than keeping their own copy.",
             "core": ">=0.21",
             "core-module": false,
+            "suggest": true,
             "provider": "TornadoEngine\\AccessMicrosoftAd\\AccessMicrosoftAdServiceProvider",
             "php-extensions": [
                 "ldap"
